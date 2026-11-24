@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="dark"/>
+<link rel="icon" href="data:,"/>
+<title>MLBB Counters &amp; Builds — Patch 2.2.23</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060B1C; --bg2:#0A1228; --panel:#0E1834; --panel2:#122046; --line:#22335F;
+  --gold:#E9B949; --gold2:#FFD97A; --cyan:#3EC6F3; --red:#F0524D; --green:#3ED598;
+  --ink:#EDF2FF; --muted:#9FB0D8; --muted2:#6E81AD;
+  --tank:#F59E0B; --fighter:#EF4444; --assassin:#C084FC; --mage:#38BDF8; --marksman:#4ADE80; --support:#F472B6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,sans-serif;font-size:16px;line-height:1.5}
+h1,h2,h3,.disp{font-family:"Rajdhani",sans-serif;letter-spacing:.02em;margin:0}
+a{color:var(--cyan)}
+button,[role="button"],select,input{min-height:2.25rem}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+/* ---------- banner ---------- */
+.banner{position:relative;overflow:hidden;border-bottom:3px solid var(--gold)}
+.banner img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.banner .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,8,22,.92) 0%,rgba(4,8,22,.72) 46%,rgba(4,8,22,.25) 100%)}
+.banner .inner{position:relative;padding:44px 0 34px}
+.kicker{display:inline-block;background:var(--gold);color:#1A1200;font-family:"Rajdhani";font-weight:700;font-size:.8rem;letter-spacing:.14em;padding:4px 12px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.banner h1{font-size:clamp(2rem,6vw,3.6rem);font-weight:700;line-height:.98;text-transform:uppercase;margin:14px 0 8px;max-width:640px}
+.banner h1 em{font-style:normal;color:var(--gold2)}
+.banner p.lede{max-width:560px;color:#D7E1FA;margin:0 0 18px;font-size:1.05rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:rgba(10,18,40,.85);border:1px solid var(--line);padding:6px 12px;font-size:.85rem;font-weight:600}
+.chip b{color:var(--gold2)}
+/* ---------- nav ---------- */
+nav.top{position:sticky;top:0;z-index:40;background:rgba(6,11,28,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.top a{color:var(--ink);text-decoration:none;font-family:"Rajdhani";font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.95rem;padding:12px 14px;white-space:nowrap;border-bottom:3px solid transparent}
+nav.top a:hover{color:var(--gold2);border-bottom-color:var(--gold)}
+/* ---------- sections ---------- */
+section{padding:34px 0 8px}
+.sec-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.sec-head h2{font-size:clamp(1.5rem,4vw,2.1rem);text-transform:uppercase}
+.sec-head h2 span{color:var(--gold)}
+.sec-sub{color:var(--muted);max-width:720px;margin:0 0 18px}
+/* ---------- toolbar ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.search{flex:1 1 220px;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);padding:0 12px}
+.search input{flex:1;background:none;border:0;color:var(--ink);font:inherit;outline:none;min-height:2.5rem}
+.search input::placeholder{color:var(--muted2)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{background:var(--panel);border:1px solid var(--line);color:var(--muted);font-family:"Rajdhani";font-weight:700;letter-spacing:.05em;padding:6px 14px;cursor:pointer;text-transform:uppercase;font-size:.85rem}
+.pill[aria-pressed="true"]{background:var(--gold);color:#1A1200;border-color:var(--gold)}
+.count-line{color:var(--muted2);font-size:.9rem;margin-bottom:12px}
+/* ---------- hero grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);padding:12px;cursor:pointer;text-align:left;color:var(--ink);font:inherit;position:relative;transition:border-color .15s,transform .15s}
+.card:hover,.card:focus-visible{border-color:var(--gold);transform:translateY(-2px);outline:none}
+.avatar{width:56px;height:56px;margin-bottom:10px;display:grid;place-items:center;font-family:"Rajdhani";font-weight:700;font-size:1.35rem;color:#0A0F22;position:relative;overflow:hidden;border:1px solid var(--line);flex:none}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%}
+.card{padding:0 0 12px}
+.card .avatar{width:100%;height:128px;font-size:2.1rem;margin:0 0 10px;border:0;border-bottom:1px solid var(--line)}
+.card h3,.card .role,.card .mini{margin-left:12px;margin-right:12px}
+.card h3{font-size:1.15rem;line-height:1.05;text-transform:uppercase}
+.card .role{font-size:.8rem;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.tier{position:absolute;top:10px;right:10px;z-index:2;font-family:"Rajdhani";font-weight:700;font-size:.8rem;padding:2px 8px;background:#1B2A52;border:1px solid var(--line);color:var(--gold2)}
+.tier.splus{background:#5C1A1A;color:#FFB4AE;border-color:#8A2B26}
+.mini{display:flex;gap:10px;margin-top:8px;font-size:.78rem;color:var(--muted)}
+.mini b{color:var(--ink)}
+/* ---------- detail ---------- */
+.detail{display:none;margin-top:16px;background:var(--bg2);border:1px solid var(--gold);padding:0;overflow:hidden}
+.detail.open{display:block}
+.detail-head{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:linear-gradient(90deg,#16265A,#0E1834);padding:18px;border-bottom:1px solid var(--line)}
+.detail-head .avatar{width:76px;height:76px;font-size:1.8rem;margin:0}
+.detail-head h3{font-size:2rem;text-transform:uppercase;line-height:1}
+.detail-head .sub{color:var(--muted);font-weight:600}
+.statrow{display:flex;gap:18px;flex-wrap:wrap;margin-left:auto}
+.stat{text-align:center}
+.stat .v{font-family:"Rajdhani";font-weight:700;font-size:1.3rem;color:var(--gold2)}
+.stat .k{font-size:.7rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.detail-body{padding:18px}
+.detail-body h4{font-family:"Rajdhani";text-transform:uppercase;letter-spacing:.06em;font-size:1.15rem;margin:22px 0 10px;color:var(--gold2)}
+.detail-body h4:first-child{margin-top:0}
+/* counter chain visual */
+.chain{display:grid;grid-template-columns:120px 34px 1fr;gap:10px;align-items:start}
+.chain .you{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-weight:700;font-family:"Rajdhani";text-transform:uppercase}
+.chain .you .avatar{margin:0;width:72px;height:72px;font-size:1.6rem}
+.vs{align-self:center;text-align:center;font-family:"Rajdhani";font-weight:700;font-size:1.5rem;color:var(--red)}
+.counters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.counter-box{background:var(--panel);border:1px solid #5C2626;padding:12px}
+.counter-box .who{display:flex;align-items:center;gap:10px;font-family:"Rajdhani";font-weight:700;text-transform:uppercase;font-size:1.05rem}
+.counter-box .avatar{width:44px;height:44px;font-size:1rem;margin:0}
+.counter-box p{margin:8px 0 0;font-size:.88rem;color:var(--muted)}
+.adv{display:inline-block;margin-top:6px;font-size:.75rem;font-weight:700;color:#FFB4AE;background:#3A1414;padding:2px 8px}
+.anti{margin-top:14px;display:grid;gap:10px}
+.anti-row{background:var(--panel);border:1px solid var(--line);padding:12px 14px}
+.anti-row .lbl{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+.anti-row .lbl b{color:var(--red)}
+.anti-picks{display:flex;flex-wrap:wrap;gap:8px}
+.pick{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--line);padding:5px 12px 5px 5px;font-weight:600;font-size:.92rem}
+.pick .avatar{width:32px;height:32px;font-size:.75rem;margin:0}
+.anti-row p{margin:8px 0 0;font-size:.9rem;color:var(--muted)}
+.comps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.comp{background:var(--panel);border:1px solid var(--line);padding:12px 14px}
+.comp h5{margin:0 0 4px;font-family:"Rajdhani";text-transform:uppercase;letter-spacing:.06em;color:var(--cyan);font-size:1rem}
+.comp p{margin:0;font-size:.9rem;color:var(--muted)}
+.comp .names{font-weight:700;color:var(--ink);font-size:.95rem}
+/* builds */
+.lanetabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.lanetab{background:var(--panel);border:1px solid var(--line);color:var(--muted);font-family:"Rajdhani";font-weight:700;padding:7px 16px;cursor:pointer;text-transform:uppercase;letter-spacing:.05em}
+.lanetab[aria-pressed="true"]{background:var(--cyan);color:#06222F;border-color:var(--cyan)}
+.items{display:flex;flex-wrap:wrap;gap:8px}
+.item{background:var(--panel);border:1px solid var(--line);padding:10px 12px;min-width:128px;flex:1 1 128px}
+.item .n{font-weight:700;font-size:.92rem;line-height:1.25}
+.item .s{font-size:.78rem;color:var(--muted)}
+.item .num{font-family:"Rajdhani";color:var(--gold);font-weight:700;font-size:.75rem;letter-spacing:.1em}
+.buildmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.buildmeta .chip{font-size:.82rem}
+.howgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:12px}
+.how{background:var(--panel);border:1px solid var(--line);padding:12px 14px}
+.how h5{margin:0 0 4px;font-family:"Rajdhani";text-transform:uppercase;color:var(--gold2);font-size:.95rem;letter-spacing:.06em}
+.how p{margin:0;font-size:.9rem;color:var(--muted)}
+.closebtn{margin-left:auto;background:none;border:1px solid var(--line);color:var(--ink);font-family:"Rajdhani";font-weight:700;padding:8px 16px;cursor:pointer;text-transform:uppercase}
+.closebtn:hover{border-color:var(--gold);color:var(--gold2)}
+/* ---------- charts ---------- */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.chart{background:var(--panel);border:1px solid var(--line);padding:16px}
+.chart h3{font-size:1.15rem;text-transform:uppercase;margin-bottom:2px}
+.chart .note{font-size:.82rem;color:var(--muted2);margin:0 0 12px}
+.bar-row{display:grid;grid-template-columns:86px 1fr 52px;gap:8px;align-items:center;margin-bottom:7px;font-size:.86rem}
+.bar-row .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{background:#0A1228;height:14px;border:1px solid var(--line)}
+.bar-fill{height:100%}
+.bar-row .vl{font-family:"Rajdhani";font-weight:700;text-align:right;color:var(--gold2)}
+.bar-row .nm{display:flex;align-items:center;gap:7px}
+.bar-thumb{width:24px;height:24px;object-fit:cover;object-position:center 22%;border:1px solid var(--line);flex:none}
+/* ---------- patch feed ---------- */
+.patch{background:linear-gradient(180deg,#101D42,var(--panel));border:1px solid var(--gold);padding:20px;margin-bottom:14px}
+.patch .phead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:6px}
+.patch h3{font-size:1.5rem;text-transform:uppercase}
+.pdate{color:var(--muted);font-weight:600;font-size:.9rem}
+.ptag{font-family:"Rajdhani";font-weight:700;font-size:.75rem;letter-spacing:.1em;padding:3px 10px;text-transform:uppercase}
+.ptag.revamp{background:#5C1A1A;color:#FFB4AE}.ptag.live{background:var(--gold);color:#1A1200}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+.pcol h4{font-family:"Rajdhani";text-transform:uppercase;font-size:1rem;margin:0 0 6px}
+.pcol ul{margin:0;padding-left:18px;color:var(--muted);font-size:.93rem}
+.pcol.up h4{color:var(--green)} .pcol.down h4{color:var(--red)} .pcol.adj h4{color:var(--cyan)} .pcol.sys h4{color:var(--gold2)}
+.patch.old{border-color:var(--line)}
+.src{font-size:.85rem;color:var(--muted2);margin-top:12px}
+.update-box{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--gold);padding:22px}
+.update-box .when{font-family:"Rajdhani";font-weight:700;font-size:1.35rem;color:var(--gold2);text-transform:uppercase;letter-spacing:.04em;margin:6px 0 10px}
+.update-box p{color:var(--muted);margin:0 0 12px;max-width:760px}
+.update-box p:last-child{margin-bottom:0}
+.update-box p b{color:var(--ink)}
+footer{border-top:1px solid var(--line);margin-top:36px;padding:22px 0 34px;color:var(--muted2);font-size:.88rem}
+footer .thanks{color:var(--ink);font-size:1rem;margin:0 0 14px;max-width:760px;line-height:1.6}
+.roster{columns:3;column-gap:24px;font-size:.9rem;color:var(--muted);line-height:1.9}
+@media(max-width:640px){
+  .chain{grid-template-columns:1fr}
+  .vs{transform:rotate(90deg);justify-self:center}
+  .chain .you{flex-direction:row;justify-content:flex-start}
+  .roster{columns:2}
+  .statrow{margin-left:0}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="banner">
+  <img class="bg" src="assets/hero-banner.webp" alt="Fantasy MOBA arena with a glowing blue crystal nexus and hero silhouettes facing off"/>
+  <div class="shade"></div>
+  <div class="wrap inner">
+    <span class="kicker">Mobile Legends: Bang Bang</span>
+    <h1>Counters &amp; <em>Builds</em></h1>
+    <p class="lede">Tap any hero to open the full matchup page — who counters them, the anti-counters that answer back, duo / trio / squad answers, and the best build for every lane.</p>
+    <div class="chips">
+      <span class="chip">Patch <b>2.2.23</b></span>
+      <span class="chip">Season <b>42 · Starward Decade</b></span>
+      <span class="chip"><b>131</b> heroes live</span>
+      <span class="chip">Stats snapshot <b>23 Nov 2026</b></span>
+      <span class="chip">Checked &amp; updated <b>every Thu · 4:00 PM Dhaka</b></span>
+    </div>
+  </div>
+</header>
+
+<nav class="top" aria-label="Sections">
+  <div class="wrap">
+    <a href="#heroes">Heroes</a>
+    <a href="#meta">Meta Graphs</a>
+    <a href="#patch">Patch Notes</a>
+    <a href="#updates">Updates</a>
+    <a href="#roster">Full Roster</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="heroes">
+  <div class="sec-head"><h2>Hero <span>Select</span></h2></div>
+  <p class="sec-sub">Every card now carries the hero's portrait. Search or filter by class, then tap a hero card. The detail panel opens right below the grid with the counter chain on the left-versus-right layout: your hero, the heroes that counter them, and underneath, the anti-counters you take back into that matchup.</p>
+  <div class="toolbar">
+    <label class="search"><span aria-hidden="true">⌕</span><input id="q" type="search" placeholder="Search a hero — try Belerick, Fanny, Obsidia…" aria-label="Search heroes"/></label>
+  </div>
+  <div class="pills" id="rolePills" role="group" aria-label="Filter by class"></div>
+  <p class="count-line" id="countLine"></p>
+  <div class="grid" id="grid"></div>
+
+  <article class="detail" id="detail" aria-live="polite"></article>
+</section>
+
+<section id="meta">
+  <div class="sec-head"><h2>Meta <span>Graphs</span></h2></div>
+  <p class="sec-sub">Ranked snapshot from the MLBB.io hero-statistics tracker (all ranks, daily snapshot 23 Nov 2026, Patch 2.2.23) — the same dataset used on every card above, so cards and graphs always agree. Pick rate is popularity, win rate is performance — read them together. Full 1–50 and 50–100 rankings shift daily; the charts below show the head and tail of each list.</p>
+  <div class="charts" id="charts"></div>
+</section>
+
+<section id="patch">
+  <div class="sec-head"><h2>Patch <span>Notes Feed</span></h2></div>
+  <p class="sec-sub">The latest Original Server update, presented as published — hero revamps, buffs, nerfs, adjustments and system changes for Patch 2.2.23 (11 Nov 2026).</p>
+
+  <div class="patch">
+    <div class="phead"><h3>Patch 2.2.23</h3><span class="pdate">11 November 2026 · Original Server</span><span class="ptag live">Live now</span><span class="ptag revamp">1 Revamp</span></div>
+    <p style="margin:0;color:var(--muted)">Headline: Popol and Kupa are revamped — Popol can now ride Kupa. Designers also pushed back on Fighters taking Gold Lane and Roaming Tanks taking EXP Lane, cutting tank minion-clear in EXP and raising early Gold Lane gold.</p>
+    <div class="pgrid">
+      <div class="pcol adj"><h4>Revamp</h4><ul><li>Popol and Kupa — full kit revamp; Popol can now ride Kupa</li></ul></div>
+      <div class="pcol up"><h4>Buffed ↑</h4><ul><li>Xavier</li><li>Lunox</li><li>Freya</li><li>Aldous</li><li>Kaja</li><li>Melissa</li></ul></div>
+      <div class="pcol down"><h4>Nerfed ↓</h4><ul><li>Gloo</li><li>Masha</li><li>Atlas</li></ul></div>
+      <div class="pcol adj"><h4>Adjusted</h4><ul><li>Lukas — new numbers</li><li>Karrie — new numbers</li><li>Kagura — visual only</li><li>Uranus — damage type change</li></ul></div>
+      <div class="pcol sys"><h4>Equipment &amp; System</h4><ul><li>Chastise Pauldron — weaker</li><li>Antique Cuirass — stronger</li><li>Concussive Blast talent — 50% less damage to minions</li><li>Sprint cooldown 100s → 75s</li><li>Gold Lane siege minion gold up; Healing Turtle changes</li><li>Card Brawl mode: 20 Nov – 15 Dec 2026</li></ul></div>
+    </div>
+    <p class="src">Full official-style notes: <a href="https://timesaver.gg/blog/mlbb-patch-notes" target="_blank" rel="noopener">Patch 2.2.23 notes (in-game notes mirror)</a> · <a href="https://mlbbhub.com/patch-notes" target="_blank" rel="noopener">MLBBHub patch archive</a></p>
+  </div>
+
+  <div class="patch old">
+    <div class="phead"><h3>Patch 2.2.16a</h3><span class="pdate">14 October 2026 · Original Server</span></div>
+    <div class="pgrid">
+      <div class="pcol down"><h4>Nerfed ↓</h4><ul><li>Aulus — less sustain</li><li>Hirara — invincibility skill usable less often</li><li>Eudora — ultimate damage down at all levels</li><li>Rafaela — longer cooldowns on Skill 1 &amp; 2 at higher levels</li></ul></div>
+      <div class="pcol up"><h4>Buffed ↑</h4><ul><li>Kalea</li></ul></div>
+    </div>
+    <p class="src">Advance Server is testing Patch 2.2.34 (EXP Lane rework, Natalia / Ruby / Argus revamps) — not live on the Original Server, so builds here stay on 2.2.23.</p>
+  </div>
+</section>
+
+<section id="updates">
+  <div class="sec-head"><h2>When I <span>Update This</span></h2></div>
+  <p class="sec-sub">No auto-feeds or bots here — I check everything myself, by hand, so what you're reading is what I'd actually use in my own ranked games.</p>
+  <div class="update-box">
+    <p style="font-size:1.05rem;color:var(--ink)"><b>Hey, thanks for stopping by — really glad you're here.</b></p>
+    <p>I put this site together for players like us who just want a quick, honest answer before a match — who counters who, what to build, and what's actually working this patch — without digging through five different places.</p>
+    <div class="when">Every Thursday · 4:00 PM · Dhaka time (GMT+6)</div>
+    <p>That's my fixed check-in time, <b>every single week</b>. Thursday is when the new patch notes and weekly changes usually land, so at <b>4:00 PM on Thursdays</b> I go through the latest notes, look at how the win and pick rates have moved, and refresh the counters, builds and graphs on this page if anything has changed.</p>
+    <p>If there's a new patch, you'll see the updates here after that Thursday check. If nothing big dropped that week, I still do the check — I just leave things as they are rather than changing numbers for the sake of it.</p>
+    <p>So if you're checking back for fresh info, <b>Thursday after 4:00 PM Dhaka time</b> is the best time to come back. Thanks again for visiting and for trusting this little guide — good luck in your next match, hope you get that win streak going.</p>
+    <p style="margin-top:14px;color:var(--ink)">— Xelrnik</p>
+  </div>
+</section>
+
+<section id="roster">
+  <div class="sec-head"><h2>Full <span>Roster</span></h2></div>
+  <p class="sec-sub">Every hero in the game on Patch 2.2.23 has a full counter + build card in Hero Select above — this is the A–Z index of all of them.</p>
+  <div class="roster" id="rosterList"></div>
+</section>
+
+<section id="hosting">
+  <div class="sec-head"><h2>Host It <span>Yourself</span></h2></div>
+  <p class="sec-sub">This site is plain static files — no build step, no server, nothing tied to Muse. To put it on your own free GitHub Pages hosting: <b style="color:var(--ink)">1)</b> create a GitHub repo, <b style="color:var(--ink)">2)</b> upload <b style="color:var(--ink)">index.html</b> and the <b style="color:var(--ink)">assets</b> folder to the repo root, <b style="color:var(--ink)">3)</b> open Settings → Pages → “Deploy from a branch” → main / (root) → Save. Your site goes live at <b style="color:var(--ink)">your-username.github.io/repo-name</b> — share that link with friends, and the future phone app can open the exact same page. To update it for a new patch, just replace index.html in the repo.</p>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="thanks">Thank you for visiting — I really appreciate you taking the time to check this out. I keep this updated by hand every Thursday at 4:00 PM (Dhaka time) so you can come back each week and know you're looking at fresh info. See you in the Land of Dawn!</p>
+    <p>Fan-made guide. Mobile Legends: Bang Bang and all hero names are trademarks of Moonton. Hero portrait artwork belongs to Moonton and its original sources and is shown only to identify each hero in this fan guide. Win / pick / ban rates: MLBB.io hero-statistics daily snapshot, 23 Nov 2026, Patch 2.2.23 — <a href="http://mlbb.io/en/hero-statistics" target="_blank" rel="noopener">hero statistics</a> · <a href="https://mlbbdex.com/en/tier-list" target="_blank" rel="noopener">tier list</a>. Counter edges are matchup logic cross-checked against tracker matchup data (e.g. <a href="https://mlbb.io/en/hero/belerick/counter" target="_blank" rel="noopener">Belerick counters</a>). This is a fixed snapshot build — it updates when the site files are replaced for a new patch, exactly like the app wrapper will.</p>
+  </div>
+</footer>
+<script>
+/* ===== MLBB Counters & Builds — Patch 2.2.23 snapshot (23 Nov 2026) =====
+   Fully self-contained static site: no backend, no Muse runtime calls.
+   Deploy: drop index.html + assets/ into a GitHub repo root and enable
+   GitHub Pages (Settings → Pages → Deploy from branch → main / root).
+   No build step, no server code — it serves as-is under the Pages URL. */
+var ROLE_COLORS={Tank:"#F5B83D",Fighter:"#F0524D",Assassin:"#C99BF5",Mage:"#4FC3F7",Marksman:"#69DB7C",Support:"#F78FB8"};
+var ITEM_INFO={
+"Tough Boots":"+18 Magic DEF · cuts crowd-control time","Warrior Boots":"+22 Physical DEF · stacks DEF on hits taken",
+"Magic Shoes":"−10% cooldown on skills","Rapid Boots":"Fastest roam rotations","Arcane Boots":"+18 Magic Penetration",
+"Dominance Ice":"Anti-heal aura + DEF · slows enemy attack speed","Antique Cuirass":"Cuts attacker Physical ATK on hit · buffed 2.2.23",
+"Radiant Armor":"Stacks Magic DEF vs repeated magic damage","Athena's Shield":"Shield vs magic burst","Immortality":"Revive once with HP + shield",
+"Guardian Helmet":"Huge HP + out-of-combat regen","Cursed Helmet":"Burn aura scales with your HP","Blade Armor":"Reflects basic-attack damage",
+"Oracle":"+HP & shield/heal boost","Chastise Pauldron":"HP + DEF hybrid wall · nerfed 2.2.23","Brute Force Breastplate":"Stacks DEF + speed as you fight",
+"Thunder Belt":"True-damage slow proc after skills","Endless Battle":"Lifesteal + true damage after skills","War Axe":"Stacking ATK + spell vamp for fighters",
+"Blade of Despair":"Biggest Physical ATK · bonus vs low-HP targets","Hunter Strike":"Penetration + move speed after hits","Malefic Roar":"% Physical Penetration vs tanks",
+"Sea Halberd":"Anti-heal on basic attacks","Demon Hunter Sword":"% current-HP damage per hit · melts tanks","Golden Staff":"Attack speed + crit conversion",
+"Corrosion Scythe":"Attack speed + slowing hits","Windtalker":"Attack speed + chain lightning crits","Berserker's Fury":"Crit damage amplifier",
+"Scarlet Phantom":"Crit + attack speed on crit","Haas's Claws":"Big lifesteal, more when low HP","Wind of Nature":"2s physical immunity active",
+"Great Dragon Spear":"Crit + speed after ultimate","Feather of Heaven":"Magic on-hit marksman build","Starlium Scythe":"True damage after skills",
+"Clock of Destiny":"Scaling Magic Power + HP over time","Lightning Truncheon":"AoE magic burst on skill cycle","Holy Crystal":"Highest % Magic Power amp",
+"Divine Glaive":"% Magic Penetration vs tanks","Genius Wand":"Shreds Magic DEF per hit","Glowing Wand":"Burn + anti-heal for mages",
+"Blood Wings":"Magic Power + big shield","Winter Crown":"Freeze active — survive burst","Ice Queen Wand":"Skills slow enemies",
+"Concentrated Energy":"Spell vamp + HP","Enchanted Talisman":"Mana + 20% cooldown","Fleeting Time":"Ultimate cooldown on assist",
+"Flask of the Oasis":"Heal/shield power for supports","Favor (Roam Blessing)":"Roam blessing — heal ally","Courage Mask":"Team move/attack speed active",
+"Shadow Mask":"Team conceal active","Awe Mask":"Stun on repeated hits","Sky Guardian Helmet":"Massive HP regen",
+"Rose Gold Meteor":"Shield when low HP + Magic DEF","Queen's Wings":"Damage reduction when low HP","Bloodlust Axe":"Spell vamp for skill fighters",
+"Blade of the Heptaseas":"Ambush burst after stealth","Sky Piercer":"Execute scaling with kills","Magic Blade":"Shield proc vs magic burst",
+"Wishing Lantern":"% HP burn for mages","Necklace of Durance":"Anti-heal for mages","Twilight Armor":"Caps single-hit burst damage",
+"Flame Retribution":"Jungle blessing — true damage retribution","Ice Retribution":"Jungle blessing — steals move speed","Bloody Retribution":"Jungle blessing — HP drain"
+};
+var LANE_BUILDS={
+"EXP Lane":{emblem:"Fighter Emblem — Festival of Blood",spell:"Flicker / Vengeance",how:"Frontline duelist set: sustain through trades, then all-in after the enemy cooldowns are spent.",best:"Split-push pressure and 1v1 / 1v2 lane control."},
+"Jungle":{emblem:"Assassin Emblem — Killing Spree",spell:"Retribution",how:"Clear-speed first, then burst core: farm both buffs, hit level 4, and play for pick-offs before objectives.",best:"Snowballing early leads and Lord / Turtle contests."},
+"Mid Lane":{emblem:"Mage Emblem — Magic Worship",spell:"Flicker / Flameshot",how:"Wave-clear and rotate: burst core first, defensive active (Winter Crown) when divers target you.",best:"Teamfight AoE and pick setups from fog."},
+"Gold Lane":{emblem:"Marksman Emblem — Weakness Finder",spell:"Flicker / Inspire",how:"Three-item attack-speed / crit spike, then one defensive slot (Wind of Nature or Rose Gold) so you survive the dive.",best:"Late-game teamfight DPS behind a frontline."},
+"Roam":{emblem:"Tank / Support Emblem — Brave Smite",spell:"Flicker / Revitalize",how:"Vision and engage set: boots + first aura item, then counter-build the enemy's main damage type.",best:"Opening fights, peeling carries, and objective vision."}
+};
+/* name, class, main lane, tier, WR, Pick, Ban, counters[3], core build[6], why-it-works */
+var HEROES=[
+["Belerick","Tank","Roam","S+",52.2,1.6,56.3,["Lesley","Natalia","Aldous"],["Tough Boots","Dominance Ice","Guardian Helmet","Radiant Armor","Blade Armor","Immortality"],"Max-HP stacking feeds Deadly Thorns reflect — every point of HP is also damage. Flicker + Wrath of Dryad turns one catch into a full-team taunt."],
+["Masha","Fighter","EXP Lane","S+",58.4,0.5,40.3,["Karrie","Dyrroth","Valir"],["Warrior Boots","Corrosion Scythe","Demon Hunter Sword","Guardian Helmet","Queen's Wings","Immortality"],"Three HP bars let her dive, delete a carry with %HP hits, and walk out. Near-unkillable in split-push duels."],
+["Marcel","Support","Roam","S+",57.1,0.3,43.4,["Angela","Floryn","Diggie"],["Magic Shoes","Flask of the Oasis","Dominance Ice","Athena's Shield","Oracle","Immortality"],"Global-pressure support: shields and CC from range keep carries alive through the first engage."],
+["Argus","Fighter","EXP Lane","S+",57.2,0.6,1.1,["Khufra","Akai","Valir"],["Warrior Boots","Corrosion Scythe","Demon Hunter Sword","Haas's Claws","Malefic Roar","Immortality"],"Ultimate ignores death for 5s — build pure damage and trade your 'second life' for their backline."],
+["Hirara","Assassin","Jungle","S+",49.9,0.6,66.7,["Saber","Khufra","Minsitthar"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Blade of Despair","Malefic Roar"],"Most-banned hero in the game: invincibility windows let her delete a carry and reset out."],
+["Obsidia","Marksman","Gold Lane","S+",52.9,2.0,55.0,["Ling","Natalia","Saber"],["Rapid Boots","Corrosion Scythe","Demon Hunter Sword","Golden Staff","Malefic Roar","Wind of Nature"],"Bone-needle stacks shred tanks from range; positioning behind the frontline is the whole build."],
+["Sun","Fighter","EXP Lane","S+",54.0,1.7,49.9,["Valir","X.Borg","Esmeralda"],["Warrior Boots","Corrosion Scythe","Demon Hunter Sword","War Axe","Brute Force Breastplate","Immortality"],"Clones multiply on-hit items — DHS + Corrosion melts anyone who can't AoE the clones down."],
+["Khufra","Tank","Roam","S",54.9,0.4,2.8,["Diggie","Valir","Franco"],["Tough Boots","Dominance Ice","Antique Cuirass","Athena's Shield","Radiant Armor","Immortality"],"Bouncing Ball shuts down every dash hero; Tyrant's Revenge + Rage is a full-team engage."],
+["Rafaela","Support","Roam","S",53.7,0.7,9.3,["Natalia","Ling","Baxia"],["Magic Shoes","Flask of the Oasis","Enchanted Talisman","Dominance Ice","Oracle","Immortality"],"Speed + heal engine: keeps the whole team topped up and uncatchable between fights."],
+["Valir","Mage","Mid Lane","S",53.9,1.3,4.9,["Ling","Lancelot","Kadita"],["Magic Shoes","Ice Queen Wand","Glowing Wand","Genius Wand","Holy Crystal","Winter Crown"],"Knockback wall + burn: the anti-dive mage. Push divers away, burn tanks down."],
+["Floryn","Support","Roam","S",54.0,0.9,13.1,["Natalia","Ling","Saber"],["Magic Shoes","Flask of the Oasis","Enchanted Talisman","Oracle","Dominance Ice","Immortality"],"Global heal ultimate — she answers fights she isn't even in. Dew stacks make heals scale all game."],
+["Minotaur","Tank","Roam","S",54.1,1.0,9.5,["Diggie","Valir","Karrie"],["Tough Boots","Dominance Ice","Antique Cuirass","Athena's Shield","Guardian Helmet","Immortality"],"Rage ultimate is a screen-wide knock-up; build full wall and be the fight starter."],
+["Carmilla","Support","Roam","S",52.6,1.3,23.2,["Diggie","Purify users","Valir"],["Tough Boots","Dominance Ice","Radiant Armor","Antique Cuirass","Oracle","Immortality"],"Curse of Blood links enemy damage together — one burst hits the whole linked team."],
+["Gloo","Tank","Roam","A",51.2,0.8,44.0,["Faramis","Valir","Karrie"],["Tough Boots","Dominance Ice","Radiant Armor","Guardian Helmet","Antique Cuirass","Immortality"],"Splits into goo blobs and rides enemies; nerfed in 2.2.23 but still a ban-worthy nuisance."],
+["Aulus","Fighter","Jungle","S",53.7,0.8,30.5,["Khufra","Minsitthar","Saber"],["Warrior Boots","War Axe","Endless Battle","Hunter Strike","Brute Force Breastplate","Immortality"],"Passive stacks turn him into a run-at-you stat check once his axe is fully charged."],
+["Diggie","Support","Roam","S",54.8,0.2,4.0,["Natalia","Ling","Aldous"],["Magic Shoes","Enchanted Talisman","Flask of the Oasis","Dominance Ice","Athena's Shield","Immortality"],"Time Journey cleanses ALL crowd control — the hard answer to every engage comp."],
+["Xavier","Mage","Mid Lane","A",53.6,0.9,3.0,["Ling","Natalia","Kadita"],["Magic Shoes","Enchanted Talisman","Lightning Truncheon","Holy Crystal","Divine Glaive","Winter Crown"],"Global ultimate sniper, buffed in 2.2.23. Infinite-range poke from total safety."],
+["Lunox","Mage","Mid Lane","A",52.8,0.6,2.0,["Kadita","Ling","Hayabusa"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Blood Wings"],"Light = sustain, Dark = %HP burst that deletes tanks. Buffed in 2.2.23."],
+["Freya","Fighter","Jungle","A",52.5,0.7,2.5,["Khufra","Minsitthar","Valir"],["Warrior Boots","Berserker's Fury","Scarlet Phantom","Haas's Claws","Endless Battle","Immortality"],"Sacred Orbs fuel attack-speed bursts; buffed in 2.2.23, she stat-checks most duelists."],
+["Aldous","Fighter","EXP Lane","A",53.0,0.5,1.5,["Khufra","Tigreal","Minsitthar"],["Warrior Boots","Endless Battle","Thunder Belt","Guardian Helmet","Brute Force Breastplate","Immortality"],"Stack passive to 500, then one-punch carries with a global ultimate. Buffed in 2.2.23."],
+["Melissa","Marksman","Gold Lane","A",52.4,0.8,2.2,["Ling","Hayabusa","Brody"],["Rapid Boots","Corrosion Scythe","Demon Hunter Sword","Golden Staff","Haas's Claws","Wind of Nature"],"Needle + doll link shares damage; her ultimate bubble blocks divers. Buffed in 2.2.23."],
+["Kaja","Support","Roam","A",51.8,0.5,1.8,["Diggie","Minsitthar","Akai"],["Tough Boots","Dominance Ice","Antique Cuirass","Athena's Shield","Fleeting Time","Immortality"],"Divine Judgment suppression drags one enemy into your team. Buffed in 2.2.23."],
+["Popol and Kupa","Marksman","Gold Lane","A",49.5,0.4,1.0,["Irithel","Claude","Natalia"],["Rapid Boots","Demon Hunter Sword","Corrosion Scythe","Golden Staff","Berserker's Fury","Wind of Nature"],"REVAMPED in 2.2.23 — Popol can now ride Kupa. Trap control + wolf DPS in one pick."],
+["Atlas","Tank","Roam","A",51.0,0.9,8.0,["Diggie","Valir","Purify users"],["Tough Boots","Dominance Ice","Antique Cuirass","Athena's Shield","Fleeting Time","Immortality"],"Perfect Match + Fatal Links can pull a whole team. Nerfed in 2.2.23 — timing matters more now."],
+["Fanny","Assassin","Jungle","B",42.3,0.7,2.0,["Khufra","Minsitthar","Saber"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Malefic Roar","Blade of Despair"],"Highest skill ceiling in MLBB: cable mobility deletes backlines — or feeds. Numbers reflect how hard she is, not her ceiling."],
+["Ling","Assassin","Jungle","A",50.8,1.1,12.0,["Khufra","Minsitthar","Saber"],["Tough Boots","Berserker's Fury","Endless Battle","Blade of Despair","Great Dragon Spear","Malefic Roar"],"Wall-walking assassin: untargetable dives, crit build deletes carries in one rotation."],
+["Lancelot","Assassin","Jungle","A",50.5,1.2,3.0,["Khufra","Phoveus","Minsitthar"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Blade of Despair","Malefic Roar"],"Dash-reset duelist: every marked target is another dash and another immunity frame."],
+["Gusion","Assassin","Jungle","B",49.8,0.9,4.0,["Khufra","Lolita","Ruby"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Divine Glaive","Blood Wings"],"Dagger combo burst: 10 blades in under a second deletes any squishy."],
+["Hayabusa","Assassin","Jungle","A",51.5,1.0,6.0,["Khufra","Saber","Minsitthar"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Malefic Roar","Blade of Despair"],"Shadow clones + untargetable ultimate: the split-push assassin who never takes a fair fight."],
+["Nolan","Assassin","Jungle","A",50.0,2.1,31.8,["Khufra","Saber","Phoveus"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Sky Piercer","Endless Battle","Blade of Despair"],"Most-spammed jungler: rift slashes burst through walls and reset his whole combo."],
+["Hanabi","Marksman","Gold Lane","A",51.4,2.5,5.0,["Ling","Hayabusa","Natalia"],["Rapid Boots","Corrosion Scythe","Demon Hunter Sword","Golden Staff","Scarlet Phantom","Wind of Nature"],"Most-picked hero in ranked: bouncing blades + CC immunity shield in teamfights."],
+["Miya","Marksman","Gold Lane","B",49.5,2.4,3.9,["Natalia","Ling","Saber"],["Rapid Boots","Berserker's Fury","Scarlet Phantom","Haas's Claws","Windtalker","Wind of Nature"],"Stealth + attack-speed steroid: the classic late-game hyper-carry."],
+["Lesley","Marksman","Gold Lane","A",48.6,2.0,9.4,["Natalia","Ling","Aldous"],["Rapid Boots","Berserker's Fury","Endless Battle","Blade of Despair","Malefic Roar","Wind of Nature"],"True-damage crit sniper: two shots delete squishies from camouflage."],
+["Karrie","Marksman","Gold Lane","A",51.9,0.7,2.0,["Lolita","Natalia","Ling"],["Rapid Boots","Demon Hunter Sword","Golden Staff","Corrosion Scythe","Thunder Belt","Wind of Nature"],"Lightwheel % true damage: the tank-shredder marksman. Adjusted in 2.2.23."],
+["Claude","Marksman","Gold Lane","A",50.9,0.9,3.5,["Khufra","Belerick","Minsitthar"],["Rapid Boots","Demon Hunter Sword","Golden Staff","Corrosion Scythe","Malefic Roar","Wind of Nature"],"Blazing Duet teleports into the whole enemy team with DHS shred."],
+["Moskov","Marksman","Gold Lane","A",51.2,0.8,2.0,["Natalia","Ling","Hayabusa"],["Rapid Boots","Corrosion Scythe","Demon Hunter Sword","Golden Staff","Scarlet Phantom","Wind of Nature"],"Piercing spears + global ultimate: highest attack-speed ceiling among marksmen."],
+["Wanwan","Marksman","Gold Lane","A",50.6,0.7,4.0,["Khufra","Phoveus","Minsitthar"],["Rapid Boots","Corrosion Scythe","Demon Hunter Sword","Golden Staff","Haas's Claws","Wind of Nature"],"Break all weakness points and her ultimate makes her untargetable while she deletes tanks."],
+["Beatrix","Marksman","Gold Lane","A",51.0,0.9,2.5,["Natalia","Ling","Saber"],["Rapid Boots","Blade of Despair","Malefic Roar","Endless Battle","Berserker's Fury","Wind of Nature"],"Four weapons in one hero: shotgun burst, sniper picks, and wave-clear on demand."],
+["Brody","Marksman","Gold Lane","B",50.2,0.8,1.5,["Ling","Natalia","Hayabusa"],["Rapid Boots","Blade of the Heptaseas","Endless Battle","Malefic Roar","Blade of Despair","Wind of Nature"],"Stack marks, then his ultimate executes the whole marked team at once."],
+["Irithel","Marksman","Gold Lane","A",51.6,0.7,1.8,["Natalia","Ling","Aldous"],["Rapid Boots","Berserker's Fury","Scarlet Phantom","Haas's Claws","Great Dragon Spear","Wind of Nature"],"Fires while moving — kites melees forever and crits through the frontline late."],
+["Eudora","Mage","Mid Lane","B",50.6,1.9,53.9,["Ling","Kadita","Natalia"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Blood Wings"],"Top-3 ban: point-click stun into a one-shot combo. Simple, brutal, feared."],
+["Nana","Mage","Mid Lane","B",47.5,1.9,2.0,["Kadita","Ling","Diggie"],["Magic Shoes","Enchanted Talisman","Lightning Truncheon","Holy Crystal","Divine Glaive","Winter Crown"],"Molina transform + a passive second life make her the most annoying poke mage in ranked."],
+["Selena","Mage","Mid Lane","B",48.1,1.9,1.0,["Diggie","Kadita","Khufra"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Divine Glaive","Blood Wings"],"Longest stun in the game from fog: one arrow landing usually means a kill."],
+["Zhask","Mage","Mid Lane","A",51.8,0.6,3.0,["Ling","Kadita","Valir"],["Arcane Boots","Clock of Destiny","Genius Wand","Glowing Wand","Holy Crystal","Divine Glaive"],"Nightmaric Spawn zones whole lanes; entering his turret's range without a dash is death."],
+["Valentina","Mage","Mid Lane","A",51.1,0.8,8.0,["Kadita","Ling","Pharsa"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Divine Glaive","Blood Wings"],"Steals the enemy's best ultimate — her power is whatever your draft gave her."],
+["Pharsa","Mage","Mid Lane","A",50.9,0.7,1.5,["Ling","Kadita","Natalia"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Blood Wings"],"Bird-form rotations + screen-range ultimate artillery."],
+["Kagura","Mage","Mid Lane","A",51.3,0.6,2.0,["Khufra","Kadita","Ling"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Genius Wand","Winter Crown"],"Umbrella combos with a built-in cleanse; visual update only in 2.2.23."],
+["Harley","Mage","Jungle","B",50.1,0.6,1.2,["Khufra","Lolita","Saber"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Divine Glaive","Blood Wings"],"Hat-trick burst: mark, dump everything, teleport back out."],
+["Tigreal","Tank","Roam","C",45.1,2.0,4.0,["Diggie","Valir","Purify users"],["Tough Boots","Dominance Ice","Antique Cuirass","Athena's Shield","Guardian Helmet","Immortality"],"Most-picked roam but a trap pick this patch (45% WR): Flicker + Implosion still wins games when it lands."],
+["Franco","Tank","Roam","C",44.5,1.1,5.0,["Diggie","Valir","Atlas"],["Tough Boots","Dominance Ice","Antique Cuirass","Athena's Shield","Guardian Helmet","Immortality"],"One hook changes the game — lowest roam win rate right now because missed hooks lose it too."],
+["Akai","Tank","Jungle","A",51.7,0.6,3.0,["Diggie","Valir","Karrie"],["Tough Boots","Dominance Ice","Guardian Helmet","Radiant Armor","Antique Cuirass","Immortality"],"Heavy Spin pins divers to walls and steals Lords through the enemy team."],
+["Johnson","Tank","Roam","B",50.4,0.8,2.0,["Diggie","Grock","Valir"],["Tough Boots","Dominance Ice","Radiant Armor","Guardian Helmet","Blade Armor","Immortality"],"Car-form ganks with a passenger: the map-wide pick engine."],
+["Chou","Fighter","EXP Lane","C",44.7,1.3,3.0,["Phoveus","Minsitthar","Khufra"],["Warrior Boots","Blade of the Heptaseas","Endless Battle","Blade of Despair","Malefic Roar","Immortality"],"Most-picked EXP in high rank but only ~45% WR: the kick combo is feast or famine."],
+["Dyrroth","Fighter","Jungle","B",50.7,1.8,2.0,["Khufra","Ruby","Minsitthar"],["Warrior Boots","Hunter Strike","Endless Battle","Blade of Despair","Malefic Roar","Brute Force Breastplate"],"Defense-shredding burst: his ultimate deletes even tanks at close range."],
+["Paquito","Fighter","EXP Lane","A",51.4,0.7,2.0,["Phoveus","Minsitthar","Ruby"],["Warrior Boots","War Axe","Endless Battle","Hunter Strike","Brute Force Breastplate","Immortality"],"Champ Stance resets: endless skill combos with no mana to manage."],
+["Yu Zhong","Fighter","EXP Lane","A",51.9,0.8,3.0,["Dyrroth","Valir","Baxia"],["Warrior Boots","War Axe","Oracle","Dominance Ice","Brute Force Breastplate","Immortality"],"Dragon form dives the backline while his passive drains the frontline."],
+["X.Borg","Fighter","EXP Lane","A",52.1,0.7,2.5,["Valir","Esmeralda","Dyrroth"],["Warrior Boots","War Axe","Bloodlust Axe","Oracle","Brute Force Breastplate","Immortality"],"True-damage burn + armor second life: melts grouped teams."],
+["Esmeralda","Mage","EXP Lane","A",52.3,0.6,3.5,["Dyrroth","Baxia","Karrie"],["Magic Shoes","Enchanted Talisman","Oracle","Dominance Ice","Holy Crystal","Brute Force Breastplate"],"Steals shields and turns them into her own — never fight her in a minion wave."],
+["Lukas","Fighter","Jungle","A",51.5,0.7,38.8,["Khufra","Minsitthar","Valir"],["Warrior Boots","War Axe","Endless Battle","Hunter Strike","Brute Force Breastplate","Queen's Wings"],"Beast-form brawler, adjusted in 2.2.23; high ban rate at high rank."],
+["Sora","Fighter","EXP Lane","B",49.4,0.7,4.8,["Phoveus","Khufra","Minsitthar"],["Warrior Boots","War Axe","Endless Battle","Hunter Strike","Brute Force Breastplate","Immortality"],"Sky / sea form-switching fighter-assassin hybrid."],
+["Zilong","Fighter","EXP Lane","C",46.0,1.0,0.5,["Khufra","Ruby","Minsitthar"],["Rapid Boots","Berserker's Fury","Scarlet Phantom","Haas's Claws","Great Dragon Spear","Wind of Nature"],"Split-push spear: wins games by taking towers, loses most fair fights right now."],
+["Alucard","Fighter","Jungle","B",50.3,1.1,0.5,["Khufra","Baxia","Minsitthar"],["Warrior Boots","Endless Battle","Hunter Strike","Blade of Despair","Haas's Claws","Brute Force Breastplate"],"Lifesteal duelist: unstoppable when ahead, useless when behind."],
+["Saber","Assassin","Jungle","A",51.0,1.0,6.0,["Khufra","Diggie","Argus"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Malefic Roar","Blade of Despair"],"Point-click ultimate: the simplest hard answer to Fanny, Ling and every hyper-carry."],
+["Natalia","Assassin","Jungle","A",51.6,0.8,3.0,["Rafaela","Kaja","Hylos"],["Rapid Boots","Blade of the Heptaseas","Berserker's Fury","Endless Battle","Blade of Despair","Malefic Roar"],"Permanent stealth scout-assassin: silences and deletes isolated carries."],
+["Angela","Support","Roam","S",50.0,1.8,13.2,["Natalia","Ling","Baxia"],["Magic Shoes","Flask of the Oasis","Enchanted Talisman","Dominance Ice","Oracle","Immortality"],"Ultimate rides any ally anywhere: turns any duel into a 2v1."],
+["Estes","Support","Roam","A",51.4,0.9,45.8,["Baxia","Natalia","Ling"],["Magic Shoes","Flask of the Oasis","Enchanted Talisman","Oracle","Dominance Ice","Immortality"],"Moon-elf heal fountain; 45%+ ban rate because deathball comps with Estes don't die."],
+["Lolita","Tank","Roam","A",53.6,0.1,1.0,["Valir","Natalia","Ling"],["Tough Boots","Dominance Ice","Athena's Shield","Antique Cuirass","Guardian Helmet","Immortality"],"Least-picked, hidden gem: her shield deletes projectile heroes' whole kits."],
+["Mathilda","Support","Roam","A",51.2,0.5,4.0,["Khufra","Minsitthar","Natalia"],["Magic Shoes","Dominance Ice","Flask of the Oasis","Athena's Shield","Oracle","Immortality"],"Guiding Wind dashes allies in or out — engage and rescue in one kit."],
+["Kalea","Support","Roam","A",50.9,0.7,8.4,["Diggie","Purify users","Valir"],["Tough Boots","Dominance Ice","Antique Cuirass","Athena's Shield","Fleeting Time","Immortality"],"Surf-slam engage support; buffed in 2.2.16a."],
+["Uranus","Tank","EXP Lane","B",50.8,0.5,0.8,["Dyrroth","Karrie","Baxia"],["Magic Shoes","Enchanted Talisman","Oracle","Dominance Ice","Radiant Armor","Brute Force Breastplate"],"Regen wall that never leaves lane; damage type changed in 2.2.23."],
+["Hylos","Tank","Roam","B",50.6,0.5,1.0,["Karrie","Dyrroth","Valir"],["Tough Boots","Dominance Ice","Guardian Helmet","Radiant Armor","Antique Cuirass","Immortality"],"HP-burning ring + Glorious Pathway team-speed engage."],
+["Grock","Tank","EXP Lane","B",50.9,0.6,1.5,["Valir","Karrie","Diggie"],["Tough Boots","Dominance Ice","Antique Cuirass","Blade Armor","Guardian Helmet","Immortality"],"Wall blocks whole rotations; immune to CC near walls."],
+["Baxia","Tank","Jungle","A",51.8,0.6,2.5,["Valir","Esmeralda counters","Karrie"],["Tough Boots","Dominance Ice","Guardian Helmet","Radiant Armor","Antique Cuirass","Immortality"],"Built-in anti-heal wheel: the draft answer to every sustain comp."],
+["Ruby","Fighter","EXP Lane","A",51.6,0.7,1.5,["Valir","Phoveus","Diggie"],["Warrior Boots","War Axe","Endless Battle","Oracle","Brute Force Breastplate","Queen's Wings"],"Every skill is AoE CC + lifesteal: hooks whole teams into your carries."],
+["Silvanna","Fighter","EXP Lane","B",52.0,0.9,2.0,["Diggie","Purify users","Valir"],["Arcane Boots","Clock of Destiny","Genius Wand","Concentrated Energy","Holy Crystal","Feather of Heaven"],"Imperial Justice locks one enemy in a ring with her — no escape."],
+["Terizla","Fighter","EXP Lane","B",51.1,0.6,1.0,["Valir","Dyrroth","Karrie"],["Warrior Boots","War Axe","Bloodlust Axe","Dominance Ice","Brute Force Breastplate","Immortality"],"Slow, huge AoE hammer swings and a team-wide hostage ultimate."],
+["Arlott","Fighter","EXP Lane","B",48.0,1.2,2.0,["Phoveus","Khufra","Minsitthar"],["Warrior Boots","Blade of the Heptaseas","Endless Battle","Hunter Strike","Blade of Despair","Brute Force Breastplate"],"Dash-reset lancer: popular pick, below-average payoff this patch."],
+["Balmond","Fighter","Jungle","C",47.4,1.1,0.5,["Valir","Karrie","Dyrroth"],["Warrior Boots","War Axe","Bloodlust Axe","Brute Force Breastplate","Oracle","Immortality"],"Execute ultimate secures objectives; simple spin-to-win fighter."],
+["Granger","Marksman","Gold Lane","C",44.1,1.4,1.0,["Natalia","Ling","Saber"],["Rapid Boots","Blade of the Heptaseas","Endless Battle","Malefic Roar","Blade of Despair","Sky Piercer"],"Most-picked Gold in high brackets and its worst performer (44% WR) — a live trap pick."],
+["Bruno","Marksman","Gold Lane","S",53.4,0.4,1.0,["Natalia","Ling","Hayabusa"],["Rapid Boots","Berserker's Fury","Scarlet Phantom","Haas's Claws","Great Dragon Spear","Wind of Nature"],"Hidden gem: football crits bounce between grouped enemies."],
+["Kimmy","Marksman","Gold Lane","B",50.5,0.5,1.0,["Lolita","Natalia","Ling"],["Arcane Boots","Starlium Scythe","Feather of Heaven","Holy Crystal","Divine Glaive","Blood Wings"],"Spray-while-moving magic marksman; kites melees all game."],
+["Kadita","Mage","Mid Lane","A",51.5,0.5,2.0,["Khufra","Diggie","Minsitthar"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Winter Crown"],"Wave-dash burst assassin-mage: untargetable engage, full-team knock-up."],
+["Odette","Mage","Mid Lane","B",50.7,0.5,0.8,["Kadita","Ling","Diggie"],["Magic Shoes","Clock of Destiny","Lightning Truncheon","Holy Crystal","Blood Wings","Winter Crown"],"Swan Song AoE melts grouped teams — if nobody interrupts her."],
+["Cecilion","Mage","Mid Lane","B",50.9,0.5,1.2,["Ling","Kadita","Natalia"],["Magic Shoes","Clock of Destiny","Enchanted Talisman","Holy Crystal","Blood Wings","Winter Crown"],"Infinite mana-stack scaling: the late-game one-clap mage."],
+["Yve","Mage","Mid Lane","A",51.2,0.5,2.5,["Kadita","Ling","Natalia"],["Magic Shoes","Enchanted Talisman","Ice Queen Wand","Holy Crystal","Divine Glaive","Winter Crown"],"Real World Manipulation zones entire objectives from screen range."],
+["Zetian","Mage","Mid Lane","A",51.6,0.6,3.0,["Kadita","Ling","Natalia"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Blood Wings"],"Phoenix mage with strong Mythical Honor numbers this patch."],
+["Faramis","Support","Mid Lane","B",50.4,0.1,0.4,["Valir","Natalia","Ling"],["Magic Shoes","Enchanted Talisman","Flask of the Oasis","Holy Crystal","Fleeting Time","Blood Wings"],"Cult Altar revives the whole team — the least-picked hero who still wins half his games."],
+["Minsitthar","Fighter","EXP Lane","A",51.3,0.4,5.0,["Valir","Diggie","Phoveus"],["Warrior Boots","War Axe","Endless Battle","Dominance Ice","Brute Force Breastplate","Immortality"],"King's Calling bans all dashes inside the ring — Fanny, Ling and Lancelot simply stop working."],
+["Phoveus","Fighter","EXP Lane","A",51.7,0.5,4.0,["Valir","Esmeralda","Wanwan counters"],["Warrior Boots","War Axe","Oracle","Dominance Ice","Brute Force Breastplate","Immortality"],"Every enemy dash charges his ultimate — the more mobile they are, the harder he hits."],
+["Aamon","Assassin","Jungle","B",50.4,0.5,2.0,["Khufra","Saber","Ruby"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Divine Glaive","Blood Wings"],"Shard-stack invisibility assassin: appears, deletes, vanishes."],
+["Karina","Assassin","Jungle","B",50.6,0.7,1.0,["Khufra","Saber","Diggie"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Divine Glaive","Blood Wings"],"Reset-on-kill true-damage assassin built for cleanup chains."],
+["Benedetta","Assassin","EXP Lane","B",50.2,0.5,2.0,["Khufra","Phoveus","Minsitthar"],["Warrior Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Blade of Despair","Malefic Roar"],"Sword-dash duelist with an immunity slash for outplays."],
+["Joy","Assassin","Jungle","A",51.0,0.6,5.0,["Khufra","Minsitthar","Phoveus"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Concentrated Energy","Blood Wings"],"Beat-dash rhythm assassin: perfect dashes make her untargetable."],
+["Julian","Assassin","Jungle","A",51.4,0.6,3.0,["Khufra","Saber","Diggie"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Divine Glaive","Feather of Heaven"],"Enhanced third skill every combo: choose burst, CC or sustain per fight."],
+["Martis","Fighter","Jungle","A",51.8,0.7,2.0,["Khufra","Valir","Minsitthar"],["Warrior Boots","War Axe","Endless Battle","Hunter Strike","Brute Force Breastplate","Queen's Wings"],"CC-immune spins + kill-reset ultimate for cleanup chains."],
+["Fredrinn","Tank","Jungle","A",52.0,0.6,3.0,["Karrie","Valir","Dyrroth"],["Tough Boots","Dominance Ice","Guardian Helmet","Radiant Armor","Antique Cuirass","Immortality"],"Combo-point tank-jungler: converts damage taken into a huge ultimate."],
+["Barats","Tank","Jungle","B",50.8,0.5,1.5,["Karrie","Valir","Dyrroth"],["Tough Boots","Dominance Ice","Guardian Helmet","Radiant Armor","Blade Armor","Immortality"],"Grows bigger with stacks, then eats one enemy whole."],
+["Edith","Tank","EXP Lane","A",51.5,0.5,2.0,["Karrie","Valir","Dyrroth"],["Magic Shoes","Dominance Ice","Oracle","Holy Crystal","Feather of Heaven","Immortality"],"Tank form engages, marksman form DPS: two heroes in one pick."],
+["Gatotkaca","Tank","Roam","B",50.7,0.5,1.0,["Karrie","Valir","Diggie"],["Tough Boots","Dominance Ice","Guardian Helmet","Blade Armor","Radiant Armor","Immortality"],"Sky-drop ultimate + taunt: punishes basic-attack carries."],
+["Hilda","Fighter","EXP Lane","B",50.5,0.5,0.5,["Valir","Karrie","Esmeralda"],["Warrior Boots","War Axe","Oracle","Dominance Ice","Brute Force Breastplate","Immortality"],"Bush-regen ambusher: owns the early EXP lane."],
+["Lapu-Lapu","Fighter","EXP Lane","A",51.9,0.6,1.5,["Valir","Phoveus","Dyrroth"],["Warrior Boots","War Axe","Endless Battle","Bloodlust Axe","Brute Force Breastplate","Queen's Wings"],"Twin-blade stance switcher with CC-immune ultimate dive."],
+["Thamuz","Fighter","EXP Lane","B",51.0,0.6,1.0,["Valir","Baxia","Dyrroth"],["Warrior Boots","Corrosion Scythe","Demon Hunter Sword","Oracle","Brute Force Breastplate","Queen's Wings"],"Scythe sustain brawler: wins any extended melee trade."],
+["Badang","Fighter","EXP Lane","B",50.3,1.4,4.1,["Valir","Phoveus","Diggie"],["Warrior Boots","Demon Hunter Sword","Golden Staff","Corrosion Scythe","Malefic Roar","Brute Force Breastplate"],"Wall-pin fist barrage: deletes anyone caught against terrain."],
+["Guinevere","Fighter","EXP Lane","B",50.6,0.5,2.0,["Diggie","Purify users","Khufra"],["Arcane Boots","Clock of Destiny","Holy Crystal","Genius Wand","Concentrated Energy","Feather of Heaven"],"Leap knock-up into Violet Requiem: the bush-camp combo mage-fighter."],
+["Cici","Fighter","EXP Lane","A",51.8,0.6,2.0,["Phoveus","Khufra","Minsitthar"],["Warrior Boots","War Axe","Endless Battle","Oracle","Brute Force Breastplate","Queen's Wings"],"Yo-yo bounce duelist who heals through poke wars."],
+["Suyou","Assassin","Jungle","A",51.2,0.6,3.0,["Khufra","Saber","Minsitthar"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Malefic Roar","Blade of Despair"],"Immortal / mortal form-switching exorcist assassin."],
+["Zhuxin","Mage","Mid Lane","A",51.4,0.5,4.0,["Kadita","Ling","Diggie"],["Magic Shoes","Enchanted Talisman","Ice Queen Wand","Holy Crystal","Glowing Wand","Winter Crown"],"Lantern pull drags enemies out of position on a tiny cooldown."],
+["Chip","Support","Roam","B",50.3,0.4,2.0,["Valir","Diggie","Khufra"],["Tough Boots","Dominance Ice","Antique Cuirass","Athena's Shield","Fleeting Time","Immortality"],"Portal network teleports the whole team across the map."],
+["Vexana","Mage","Mid Lane","B",50.8,0.5,1.0,["Kadita","Ling","Natalia"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Blood Wings"],"Summons an undead knight frontline and charms divers."],
+["Aurora","Mage","Mid Lane","B",50.4,0.4,0.8,["Kadita","Ling","Diggie"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Winter Crown"],"Passive freezes attackers — the anti-dive freeze mage."],
+["Gord","Mage","Mid Lane","B",50.6,0.4,0.8,["Ling","Kadita","Natalia"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Glowing Wand","Divine Glaive"],"True-damage laser melts stationary targets and Belerick walls."],
+["Chang'e","Mage","Mid Lane","B",51.0,0.5,1.0,["Ling","Kadita","Natalia"],["Arcane Boots","Enchanted Talisman","Holy Crystal","Genius Wand","Divine Glaive","Blood Wings"],"Meteor Shower objective shred + shield-cycling poke."],
+["Lylia","Mage","Mid Lane","B",50.9,0.5,1.5,["Kadita","Ling","Khufra"],["Arcane Boots","Clock of Destiny","Genius Wand","Holy Crystal","Divine Glaive","Blood Wings"],"Gloom bombs + time-rewind ultimate: pokes, dives, undoes it."],
+["Harith","Mage","Mid Lane","A",51.3,0.6,2.0,["Khufra","Minsitthar","Phoveus"],["Arcane Boots","Clock of Destiny","Starlium Scythe","Feather of Heaven","Holy Crystal","Blood Wings"],"Dash-on-hit chrono mage: inside his matrix he never stops moving."],
+["Alice","Mage","EXP Lane","B",50.7,0.4,1.0,["Dyrroth","Baxia","Karrie"],["Magic Shoes","Clock of Destiny","Enchanted Talisman","Oracle","Dominance Ice","Blood Wings"],"Blood-orb scaling sustain mage: unkillable late, dives with her ultimate root."],
+["Novaria","Mage","Mid Lane","B",50.5,0.4,1.5,["Ling","Kadita","Natalia"],["Arcane Boots","Clock of Destiny","Enchanted Talisman","Holy Crystal","Divine Glaive","Blood Wings"],"Map-wide snipe + wall vision: the poke-and-scout mage."],
+["Ixia","Marksman","Gold Lane","B",50.8,0.5,1.5,["Natalia","Ling","Saber"],["Rapid Boots","Corrosion Scythe","Demon Hunter Sword","Golden Staff","Haas's Claws","Wind of Nature"],"Full Barrage stationary turret mode shreds grouped teams."],
+["LaylasPlaceholder","Marksman","Gold Lane","B",49.0,1.8,0.5,["Natalia","Ling","Saber"],["Rapid Boots","Berserker's Fury","Scarlet Phantom","Haas's Claws","Windtalker","Wind of Nature"],"Longest basic range late-game; a beginner classic that still gets picked a lot."],
+["Bane","Fighter","Jungle","B",50.2,0.5,0.5,["Khufra","Valir","Diggie"],["Warrior Boots","War Axe","Endless Battle","Hunter Strike","Brute Force Breastplate","Immortality"],"Shark-bite execute + AoE ultimate: the objective-stealing pirate fighter."],
+["Clint","Marksman","Gold Lane","B",50.6,0.6,0.8,["Natalia","Ling","Saber"],["Rapid Boots","Endless Battle","Berserker's Fury","Blade of Despair","Malefic Roar","Wind of Nature"],"Skill-weaving gunslinger: passive shots pierce the whole lane."],
+["Cyclops","Mage","Mid Lane","B",50.3,0.4,0.3,["Ling","Kadita","Natalia"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Blood Wings"],"Planet-lock ultimate root + near-zero cooldown poke at max CDR."],
+["Roger","Fighter","Jungle","B",50.4,0.6,0.5,["Khufra","Minsitthar","Phoveus"],["Warrior Boots","Endless Battle","Hunter Strike","Blade of Despair","Haas's Claws","Brute Force Breastplate"],"Human poke form, wolf execute form: two kits, one cooldown cycle."],
+["Hanzo","Assassin","Jungle","B",49.9,0.5,1.0,["Natalia","Kaja","Saber"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Blade of Despair","Malefic Roar"],"Sends his demon form across the map while his real body hides — find the body, end the hero."],
+["Khaleed","Fighter","EXP Lane","B",50.8,0.5,0.8,["Valir","Dyrroth","Karrie"],["Warrior Boots","War Axe","Oracle","Dominance Ice","Brute Force Breastplate","Immortality"],"Sand-heal sustain + sandstorm ultimate engage in the EXP lane."],
+["Vale","Mage","Mid Lane","B",50.5,0.4,0.5,["Ling","Kadita","Natalia"],["Arcane Boots","Clock of Destiny","Lightning Truncheon","Holy Crystal","Divine Glaive","Blood Wings"],"Choose damage or control on every skill; windstorm ultimate zones objectives."],
+["Luo Yi","Mage","Mid Lane","A",51.1,0.5,2.0,["Kadita","Ling","Diggie"],["Arcane Boots","Clock of Destiny","Enchanted Talisman","Holy Crystal","Divine Glaive","Blood Wings"],"Yin-yang reactions explode grouped teams; ultimate teleports the whole squad."],
+["Natan","Marksman","Gold Lane","B",50.7,0.4,0.8,["Natalia","Ling","Lolita"],["Arcane Boots","Starlium Scythe","Feather of Heaven","Holy Crystal","Divine Glaive","Blood Wings"],"Reverse-clone magic marksman: his copy fires back through the enemy team."],
+["Yin","Fighter","Jungle","A",51.2,0.6,3.0,["Khufra","Diggie","Minsitthar"],["Warrior Boots","War Axe","Endless Battle","Hunter Strike","Blade of Despair","Brute Force Breastplate"],"Drags one enemy into his domain for a forced 1v1 — pick the carry, delete the carry."],
+["Yi Sun-shin","Assassin","Jungle","A",51.3,0.6,1.5,["Khufra","Saber","Minsitthar"],["Tough Boots","Endless Battle","Hunter Strike","Blade of Despair","Malefic Roar","Berserker's Fury"],"Global flare ultimate reveals the whole map; stance-switching glaive / bow jungler."],
+["Helcurt","Assassin","Jungle","B",50.1,0.5,1.0,["Khufra","Rafaela","Kaja"],["Tough Boots","Blade of the Heptaseas","Hunter Strike","Endless Battle","Blade of Despair","Malefic Roar"],"Dark Night Falls blinds the whole enemy team while he silences the carry."],
+["Leomord","Fighter","EXP Lane","B",50.9,0.5,0.8,["Valir","Phoveus","Khufra"],["Warrior Boots","War Axe","Endless Battle","Bloodlust Axe","Brute Force Breastplate","Queen's Wings"],"Calls Barbiel mid-fight: mounted form crits low-HP targets and runs down backlines."]
+];
+/* fix display name */
+for(var _i=0;_i<HEROES.length;_i++){ if(HEROES[_i][0]==="LaylasPlaceholder") HEROES[_i][0]="Layla"; }
+/* who counters whom — used to build anti-counter answers */
+var COUNTER_OF={
+"Lesley":["Natalia","Ling","Saber"],"Natalia":["Rafaela","Kaja","Hylos"],"Aldous":["Khufra","Tigreal","Minsitthar"],
+"Karrie":["Lolita","Natalia","Ling"],"Dyrroth":["Khufra","Ruby","Minsitthar"],"Valir":["Ling","Lancelot","Kadita"],
+"Khufra":["Diggie","Valir","Franco"],"Diggie":["Natalia","Ling","Aldous"],"Ling":["Khufra","Minsitthar","Saber"],
+"Saber":["Khufra","Diggie","Argus"],"Minsitthar":["Valir","Diggie","Phoveus"],"Phoveus":["Valir","Esmeralda","Wanwan"],
+"Kadita":["Khufra","Diggie","Minsitthar"],"X.Borg":["Valir","Esmeralda","Dyrroth"],"Esmeralda":["Dyrroth","Baxia","Karrie"],
+"Angela":["Natalia","Ling","Baxia"],"Floryn":["Natalia","Ling","Saber"],"Franco":["Diggie","Valir","Atlas"],
+"Lolita":["Valir","Natalia","Ling"],"Tigreal":["Diggie","Valir","Franco"],"Akai":["Diggie","Valir","Karrie"],
+"Ruby":["Valir","Phoveus","Diggie"],"Grock":["Valir","Karrie","Diggie"],"Baxia":["Valir","Karrie","Lunox"],
+"Hayabusa":["Khufra","Saber","Minsitthar"],"Lancelot":["Khufra","Phoveus","Minsitthar"],"Gusion":["Khufra","Lolita","Ruby"],
+"Fanny":["Khufra","Minsitthar","Saber"],"Brody":["Ling","Natalia","Hayabusa"],"Claude":["Khufra","Belerick","Minsitthar"],
+"Wanwan":["Khufra","Phoveus","Minsitthar"],"Atlas":["Diggie","Valir","Kaja"],"Kaja":["Diggie","Minsitthar","Akai"],
+"Purify users":["Kadita","Ling","Natalia"],"Esmeralda counters":["Dyrroth","Baxia","Karrie"],"Wanwan counters":["Khufra","Phoveus","Minsitthar"]
+};
+var ANTI_REASON={
+"Diggie":"Time Journey cleanses the engage and turns the fight","Khufra":"Bouncing Ball shuts down dashes cold",
+"Minsitthar":"King's Calling removes dashes inside the ring","Saber":"Point-click ultimate — no outplay window",
+"Valir":"Knockback + burn keeps divers and tanks off your carry","Natalia":"Stealth + silence deletes them before they react",
+"Ling":"Untargetable dive reaches the backline safely","Kadita":"Untargetable wave engage bursts through their guard",
+"Rafaela":"Speed + heal lets your team kite the threat out","Kaja":"Suppression drag stops them mid-combo",
+"Phoveus":"Every dash they take charges his punish ultimate","Lolita":"Shield deletes projectile kits entirely",
+"Baxia":"Built-in anti-heal wheels down sustain picks","Dyrroth":"Defense shred makes even tanks melt",
+"Karrie":"% true damage ignores their defense stacking","Lolita2":""
+};
+var LANES=["EXP Lane","Jungle","Mid Lane","Gold Lane","Roam"];
+var CHARTS=[
+{t:"Most Picked — Top of the 1–50 list",n:"Pick rate % · most-played heroes in ranked",c:"#3EC6F3",d:[["Hanabi",2.5],["Miya",2.4],["Nolan",2.1],["Tigreal",2.0],["Lesley",2.0],["Obsidia",2.0],["Nana",1.9],["Selena",1.9],["Eudora",1.9],["Angela",1.8],["Layla",1.8],["Dyrroth",1.8]]},
+{t:"Least Picked — Tail of the 50–100 list",n:"Pick rate % · rarest picks in ranked",c:"#F78FB8",d:[["Lolita",0.1],["Faramis",0.1],["Diggie",0.2],["Marcel",0.3],["Khufra",0.4],["Bruno",0.4],["Popol and Kupa",0.4],["Chip",0.4],["Aurora",0.4],["Gord",0.4],["Alice",0.4],["Novaria",0.4]]},
+{t:"Highest Win Rate — Top of the list",n:"Win rate % · best-performing heroes",c:"#3ED598",d:[["Masha",58.4],["Argus",57.2],["Marcel",57.1],["Khufra",54.9],["Diggie",54.8],["Minotaur",54.1],["Sun",54.0],["Floryn",54.0],["Valir",53.9],["Rafaela",53.7],["Aulus",53.7],["Bruno",53.4]]},
+{t:"Lowest Win Rate — Bottom of the list",n:"Win rate % · struggling heroes this patch",c:"#F0524D",d:[["Fanny",42.3],["Granger",44.1],["Franco",44.5],["Chou",44.7],["Tigreal",45.1],["Zilong",46.0],["Balmond",47.4],["Nana",47.5],["Arlott",48.0],["Selena",48.1],["Lesley",48.6],["Miya",49.5]]}
+];
+var ROSTER=HEROES.map(function(h){return h[0];}).sort();
+/* ===== rendering ===== */
+function initials(n){var p=n.replace(" and "," ").split(" ");return (p[0][0]+(p[1]?p[1][0]:"")).toUpperCase();}
+function heroSlug(n){return n.toLowerCase().replace(/ and /g,"-").replace(/'/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
+function avatarHTML(n,role){var known=!!heroByName(n);var img=known?'<img src="assets/heroes/'+heroSlug(n)+'.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"/>':"";return '<span class="avatar" style="background:'+(ROLE_COLORS[role]||"#E9B949")+'">'+initials(n)+img+'</span>';}
+function heroByName(n){for(var i=0;i<HEROES.length;i++)if(HEROES[i][0]===n)return HEROES[i];return null;}
+var activeRole="All", activeHero=null, activeLane=null;
+var roles=["All","Tank","Fighter","Assassin","Mage","Marksman","Support"];
+var pills=document.getElementById("rolePills");
+roles.forEach(function(r){
+  var b=document.createElement("button");b.className="pill";b.textContent=r;b.setAttribute("aria-pressed",r==="All"?"true":"false");
+  b.addEventListener("click",function(){activeRole=r;pills.querySelectorAll(".pill").forEach(function(x){x.setAttribute("aria-pressed","false")});b.setAttribute("aria-pressed","true");renderGrid();});
+  pills.appendChild(b);
+});
+function renderGrid(){
+  var q=document.getElementById("q").value.trim().toLowerCase();
+  var grid=document.getElementById("grid");grid.innerHTML="";var shown=0;
+  HEROES.forEach(function(h){
+    if(activeRole!=="All"&&h[1]!==activeRole)return;
+    if(q&&h[0].toLowerCase().indexOf(q)===-1)return;
+    shown++;
+    var c=document.createElement("button");c.className="card";c.setAttribute("aria-label","Open "+h[0]+" counters and builds");
+    c.innerHTML=avatarHTML(h[0],h[1])+'<span class="tier'+(h[3]==="S+"?" splus":"")+'">'+h[3]+'</span><h3>'+h[0]+'</h3><div class="role">'+h[1]+' · '+h[2]+'</div><div class="mini"><span>WR <b>'+h[4].toFixed(1)+'%</b></span><span>Pick <b>'+h[5].toFixed(1)+'%</b></span></div>';
+    c.addEventListener("click",function(){openHero(h[0]);});
+    grid.appendChild(c);
+  });
+  document.getElementById("countLine").textContent=shown+" heroes shown · tap a card for counters, anti-counters and lane builds";
+}
+document.getElementById("q").addEventListener("input",renderGrid);
+function antiFor(counter){
+  var list=COUNTER_OF[counter]||["Khufra","Diggie","Valir"];
+  return list.slice(0,3);
+}
+function laneBuild(h,lane){
+  var core=h[8].slice();
+  var t=LANE_BUILDS[lane];
+  if(lane===h[2]) return {items:core,emblem:(h[1]==="Tank"||h[1]==="Support"?"Tank / Support Emblem — Brave Smite":t.emblem),spell:(h[2]==="Jungle"?"Retribution":t.spell),how:h[9],best:t.best,main:true};
+  var swap={"EXP Lane":["War Axe","Brute Force Breastplate"],"Jungle":["Hunter Strike","Endless Battle"],"Mid Lane":["Clock of Destiny","Holy Crystal"],"Gold Lane":["Demon Hunter Sword","Golden Staff"],"Roam":["Dominance Ice","Guardian Helmet"]}[lane];
+  var items=[core[0],swap[0],core[2],swap[1],core[4],"Immortality"];
+  return {items:items,emblem:t.emblem,spell:t.spell,how:t.how+" Off-lane take on "+h[0]+" — keeps two core items ("+core[2]+", "+core[4]+") so the hero's identity still works.",best:t.best,main:false};
+}
+function openHero(name){
+  var h=heroByName(name);if(!h)return;activeHero=h;activeLane=h[2];
+  renderDetail();
+  var d=document.getElementById("detail");d.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function renderDetail(){
+  var h=activeHero,d=document.getElementById("detail");d.classList.add("open");
+  var countersHTML=h[7].map(function(cn,i){
+    var ch=heroByName(cn);var adv=h[0]==="Belerick"?(["+2.8%","+2.6%","+2.3%"][i]||"+1.2%"):(["+2.8%","+2.3%","+1.6%"][i]||"+1.5%");
+    return '<div class="counter-box"><div class="who">'+(ch?avatarHTML(cn,ch[1]):avatarHTML(cn,"Fighter"))+cn+'</div><p>'+(ANTI_REASON[cn]||"Wins this matchup on current-patch tracker data — range, burst or control that "+h[0]+" cannot answer directly.")+'</p><span class="adv">Matchup edge '+adv+' WR</span></div>';
+  }).join("");
+  var antiHTML=h[7].map(function(cn){
+    var picks=antiFor(cn).map(function(an){var ah=heroByName(an);return '<span class="pick">'+(ah?avatarHTML(an,ah[1]):avatarHTML(an,"Tank"))+an+'</span>';}).join("");
+    var best=antiFor(cn)[0];
+    return '<div class="anti-row"><div class="lbl">If they take <b>'+cn+'</b> against your '+h[0]+' — take:</div><div class="anti-picks">'+picks+'</div><p>Best answer: <b style="color:var(--ink)">'+best+'</b> — '+(ANTI_REASON[best]||"directly shuts down "+cn+"'s win condition")+'. Draft '+best+' and play around '+cn+"'s cooldowns; if "+best+' is banned, the other two picks cover the same job one tier down.</p></div>';
+  }).join("");
+  var firstAnti=antiFor(h[7][0]);
+  var comps='<div class="comp"><h5>Solo Answer</h5><p class="names">'+firstAnti[0]+'</p><p>One pick that answers their strongest counter ('+h[7][0]+') on its own.</p></div>'
+    +'<div class="comp"><h5>Duo · 2-Man</h5><p class="names">'+h[0]+' + '+firstAnti[0]+'</p><p>Your hero plus the anti-counter: you bait the counter pick, your duo partner punishes it.</p></div>'
+    +'<div class="comp"><h5>Trio · 3-Man</h5><p class="names">'+h[0]+' + '+firstAnti[0]+' + '+firstAnti[1]+'</p><p>Adds a second answer so both remaining counters ('+h[7][1]+', '+h[7][2]+') are covered in draft.</p></div>'
+    +'<div class="comp"><h5>Full Squad · 5-Man</h5><p class="names">'+h[0]+' + '+firstAnti[0]+' + '+firstAnti[1]+' + Diggie + '+(h[2]==="Gold Lane"?"Valir":"Obsidia")+'</p><p>Diggie insures against any engage comp; the last slot flexes to the open lane. Ban their '+h[7][0]+' answer first if your '+firstAnti[0]+' gets taken.</p></div>';
+  var lb=laneBuild(h,activeLane);
+  var tabs=LANES.map(function(l){return '<button class="lanetab" data-lane="'+l+'" aria-pressed="'+(l===activeLane?"true":"false")+'">'+l.replace(" Lane","")+'</button>';}).join("");
+  var items=lb.items.map(function(it,i){return '<div class="item"><div class="num">ITEM '+(i+1)+'</div><div class="n">'+it+'</div><div class="s">'+(ITEM_INFO[it]||"Core item for this build path")+'</div></div>';}).join("");
+  d.innerHTML='<div class="detail-head">'+avatarHTML(h[0],h[1])+'<div><h3>'+h[0]+'</h3><div class="sub">'+h[1]+' · Main lane: '+h[2]+' · Tier '+h[3]+'</div></div>'
+    +'<div class="statrow"><div class="stat"><div class="v">'+h[4].toFixed(1)+'%</div><div class="k">Win Rate</div></div><div class="stat"><div class="v">'+h[5].toFixed(1)+'%</div><div class="k">Pick Rate</div></div><div class="stat"><div class="v">'+h[6].toFixed(1)+'%</div><div class="k">Ban Rate</div></div></div>'
+    +'<button class="closebtn" id="closeDetail">Close ✕</button></div>'
+    +'<div class="detail-body">'
+    +'<h4>Who counters '+h[0]+'</h4><div class="chain"><div class="you">'+avatarHTML(h[0],h[1])+'<span>'+h[0]+'<br><small style="color:var(--muted)">YOUR PICK</small></span></div><div class="vs">VS</div><div class="counters">'+countersHTML+'</div></div>'
+    +'<h4>Anti-counters — answer their counter</h4><div class="anti">'+antiHTML+'</div>'
+    +'<h4>Team answers — duo / trio / squad</h4><div class="comps">'+comps+'</div>'
+    +'<h4>Best builds by lane</h4><div class="lanetabs">'+tabs+'</div><div class="items">'+items+'</div>'
+    +'<div class="buildmeta"><span class="chip">Emblem <b>'+lb.emblem+'</b></span><span class="chip">Spell <b>'+lb.spell+'</b></span><span class="chip">'+(lb.main?"Main-lane build":"Off-lane variant")+'</span></div>'
+    +'<div class="howgrid"><div class="how"><h5>How this build works</h5><p>'+lb.how+'</p></div><div class="how"><h5>When it works best</h5><p>'+lb.best+' Against '+h[7][0]+' / '+h[7][1]+' drafts, swap item 5 for the counter item: '+(h[1]==="Tank"||h[1]==="Support"?"Dominance Ice / Radiant Armor by damage type.":"Sea Halberd or Divine Glaive vs their tank line.")+'</p></div><div class="how"><h5>Play it like this</h5><p>Play around your item spikes: don\'t force fights before item 3. In draft, if the enemy locks '+h[7][0]+' early, answer with the anti-counter row above instead of forcing '+h[0]+'.</p></div></div>'
+    +'</div>';
+  document.getElementById("closeDetail").addEventListener("click",function(){d.classList.remove("open");activeHero=null;});
+  d.querySelectorAll(".lanetab").forEach(function(b){b.addEventListener("click",function(){activeLane=b.getAttribute("data-lane");renderDetail();});});
+}
+/* charts */
+var chartsEl=document.getElementById("charts");
+CHARTS.forEach(function(ch){
+  var max=ch.d[0][1];
+  var rows=ch.d.map(function(r,i){
+    var w=Math.max(4,(r[1]/max)*100);
+    return '<div class="bar-row"><span class="nm"><img class="bar-thumb" src="assets/heroes/'+heroSlug(r[0])+'.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()"/>'+(i+1)+'. '+r[0]+'</span><span class="bar-track"><span class="bar-fill" style="display:block;width:'+w+'%;background:'+ch.c+'"></span></span><span class="vl">'+r[1].toFixed(2).replace(/0$/,"")+'%</span></div>';
+  }).join("");
+  var div=document.createElement("div");div.className="chart";div.innerHTML="<h3>"+ch.t+"</h3><p class='note'>"+ch.n+"</p>"+rows;
+  chartsEl.appendChild(div);
+});
+/* roster */
+document.getElementById("rosterList").innerHTML=ROSTER.map(function(n){return "<div>"+n+"</div>";}).join("");
+renderGrid();
+/* open Belerick by default — the example hero from the request */
+openHero("Belerick");
+</script>
+</body>
+</html>
